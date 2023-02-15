@@ -140,6 +140,31 @@ $this->router()->load_routes(
 );
 ```
 
+### Model Binding
+Routes are invoked using `Introspection::invoke()` which autowires the parameters using reflection. If the reflected type is a Model class, it will try to find a model where the column `Model::getRouteAccessor` matches the route parameter. More simply put, you can magically query the database by type-hinting your route function.
+
+```php
+// dumb route
+$route->get('/users/{user_id}', function ($user_id) {
+    // $user_id returns anything before the next slash;
+    
+    $user = User::where('id', $user_id)->first();
+
+    // must check user for null;
+    if (!isset($user)) abort_raw(404, 'model not found');
+
+    //...
+});
+
+// magic route binding
+$route->get('/users/{user}', function (User $user) {
+    // $user returns pre-populated model if it exists, otherwise it fails with 404;
+
+    // guarantees user is a model; user will never be null;
+    echo "{$user->first_name}"
+});
+```
+
 ## Todo
 - [ ] Database drivers
 - [ ] View Rendering
