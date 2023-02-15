@@ -62,3 +62,12 @@ function config_path($dir='')
     return extends_path(normalize_path(NUCLEUS_CONFIG_DIR), $dir);
 }
 
+function database_path($dir='')
+{
+    return extends_path(normalize_path(NUCLEUS_DATABASE_DIR), $dir);
+}
+
+function routes_path($dir='')
+{
+    return extends_path(normalize_path(NUCLEUS_ROUTE_DIR), $dir);
+}

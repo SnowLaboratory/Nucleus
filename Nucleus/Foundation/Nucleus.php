@@ -3,6 +3,7 @@
 use Nucleus\Foundation\Container;
 use Nucleus\Linting\Whoops;
 use Nucleus\Providers\ConfigServiceProvider;
+use Nucleus\Providers\DatabaseServiceProvider;
 use Nucleus\Providers\EnvironmentServiceProvider;
 use Nucleus\Providers\ErrorServiceProvider;
 use Nucleus\Providers\ServiceProvider;
@@ -23,10 +24,16 @@ class Nucleus
 
     private $id;
 
-    public function __construct()
+    private $errors;
+
+    public function __construct(array $config=[])
     {
         $this->id = static::$count++;
+
         static::$apps[] = $this;
+
+        $this->errors = data_get($config, 'errors');
+
         $this->containerize();
         self::registerInternalServices();
         self::registerExternalServices();
@@ -56,6 +63,7 @@ class Nucleus
         $this->register(ErrorServiceProvider::class);
         $this->register(EnvironmentServiceProvider::class);
         $this->register(ConfigServiceProvider::class);
+        $this->register(DatabaseServiceProvider::class);
     }
 
     protected function registerExternalServices()
@@ -73,6 +81,15 @@ class Nucleus
         }
 
         require $path;
+    }
+
+    public function require_once($path)
+    {
+        if (!file_exists($path)) {
+            throw new Exception("Cannot load path [$path]");
+        }
+
+        require_once $path;
     }
 
     public function register($provider)
@@ -104,6 +121,12 @@ class Nucleus
         $this->instances[$key] = $this->resolve($key);
     }
 
+    public function make(string $key, ...$args)
+    {
+        $this->singleton($key, fn() => new $key(...$args));
+        return resolve($key);
+    }
+
     public function resolve(string $key)
     {
         if (array_key_exists($key, $this->instances))
@@ -125,6 +148,23 @@ class Nucleus
     {
         $this->bootServices();
         spl_autoload_unregister([$this, 'autoload']);
+    }
+
+    public function run()
+    {
+        // run without cleaning up autoload registry.
+        // not recommended if using other auto loaders.
+        $this->bootServices();
+    }
+
+    public function ignoreErrors()
+    {
+        return !$this->errors;
+    }
+
+    public function simpleErrors()
+    {
+        resolve(Whoops::class)->simpleErrors();
     }
 
     public static function getInstance($id=0)

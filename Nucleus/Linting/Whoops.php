@@ -2,16 +2,19 @@
 
 namespace Nucleus\Linting;
 
+use Nucleus;
 use Throwable;
 
 class Whoops {
 
-    public function __construct()
+    public function __construct(Nucleus $app)
     {
         error_reporting(E_ALL);
+
+        if ($app->ignoreErrors()) return;
         ini_set("html_errors", "1");
-        set_error_handler([$this, 'error']);
         set_exception_handler([$this, 'handle']);
+        // set_error_handler([$this, 'handleErrors']);
     }
 
     public function parse(Throwable $error)
@@ -19,14 +22,20 @@ class Whoops {
         $error->getTrace();
     }
 
+    public function simpleErrors()
+    {
+        ini_set("html_errors", "0");
+        restore_exception_handler();
+    }
+
     public function display()
     {
 
     }
 
-    public function error($code, $message, $file, $line)
+    public function handleErrors( int $code, string $message, ?string $file = null, ?int $line = null, ?array $context = null)
     {
-        var_dump(compact('code', 'message', 'file', 'line')); die;
+        var_dump(compact('code', 'message', 'file', 'line', 'context')); die;
     }
 
     public function handle($error)

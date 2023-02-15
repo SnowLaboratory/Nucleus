@@ -31,3 +31,7 @@ if (!defined('NUCLEUS_PUBLIC_DIR')) {
 if (!defined('NUCLEUS_ROUTE_DIR')) {
     define('NUCLEUS_ROUTE_DIR', NUCLEUS_APP_DIR . '/routes');
 }
+
+if (!defined('NUCLEUS_DATABASE_DIR')) {
+    define('NUCLEUS_DATABASE_DIR', NUCLEUS_APP_DIR . '/database');
+}

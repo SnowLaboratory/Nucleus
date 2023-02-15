@@ -12,7 +12,7 @@ class ErrorServiceProvider extends ServiceProvider
     {
 
         $this->app->singleton(Whoops::class, function () {
-            return new Whoops();
+            return new Whoops($this->app);
         });
 
     }

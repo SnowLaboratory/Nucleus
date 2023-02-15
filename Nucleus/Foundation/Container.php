@@ -32,4 +32,5 @@ class Container {
         $resolver = $this->bindings[$name];
         return call_user_func($resolver);
     }
+
 }

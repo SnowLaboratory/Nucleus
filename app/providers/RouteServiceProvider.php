@@ -9,12 +9,12 @@ class RouteServiceProvider extends ServiceProvider
     public function register()
     {
         $this->router()->load_routes(
-            routes: app_path('routes/web.php'),
+            routes: app_path('http/routes/web.php'),
             prefix: '/'
         );
 
         $this->router()->load_routes(
-            routes: app_path('routes/api.php'),
+            routes: app_path('http/routes/api.php'),
             prefix: '/api'
         );
     }

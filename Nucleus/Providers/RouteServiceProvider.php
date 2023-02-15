@@ -14,6 +14,8 @@ class RouteServiceProvider extends ServiceProvider
         $this->app->singleton(Router::class, function () {
             return new Router();
         });
+
+        $this->app->require_once(internal_path('Helpers/response.php'));
     }
 
     public function router(): Router
