@@ -18,11 +18,10 @@ class SqliteConnector implements Driver
 
         if (!\file_exists($database))
         {
-            $path = database_path($database);
+            $database = database_path($database);
 
-            if (!\file_exists($path)) {
-                file_put_contents($path, "");
-                $database = $path;
+            if (!\file_exists($database)) {
+                file_put_contents($database, "");
             }
         }
 
